@@ -1,0 +1,18 @@
+services:
+  my-fastapi:
+    container_name: my-fastapi
+    build:
+      context: .
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.my-fastapi.rule=Host(`pi.yummymeatrecipes.com`) && PathPrefix(`/my-fastapi`)
+      - traefik.http.middlewares.my-fastapi-strip.stripprefix.prefixes=/my-fastapi
+      - traefik.http.routers.my-fastapi.middlewares=my-fastapi-strip
+      - traefik.http.services.my-fastapi.loadbalancer.server.port=8000
+    networks:
+      - web
+    restart: unless-stopped
+
+networks:
+  web:
+    external: true
